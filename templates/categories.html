@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="container" style="margin-top: 100">
+    {% for item in categories%}
+<div class="col-md6 border rounded">
+    <h2>{{item.id}}</h2>
+    <div>
+        {{item.title}}
+    </div>
+
+</div>
+{% endfor %}
+
+</div>
+
+{% endblock %}
