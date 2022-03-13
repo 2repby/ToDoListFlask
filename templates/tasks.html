@@ -2,12 +2,12 @@
 
 {% block content %}
 <div class="container" >
-    <h3 class="display-4 fw-normal" style="margin-top: 100">Категории задач</h3>
+    <h3 class="display-4 fw-normal" style="margin-top: 100">Задачи</h3>
 </div>
 <div class="container" >
 
-    <div class="list-group">
-         {% for item in categories%}
+    <table class="list-group">
+         {% for item in tasks%}
 
       <div class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
 
@@ -17,17 +17,17 @@
 
             </div>
             <div>
-            <a href="/tasks/{{ item.id }}"  class="btn btn-info">Задачи</a>
-            <a href="/deletecategory/{{ item.id }}"  class="btn btn-danger">Удалить</a>
+            <a href="/edittask/{{ item.id }}"  class="btn btn-info">Редактировать</a>
+            <a href="/deletetask/{{ item.id }}"  class="btn btn-danger">Удалить</a>
             </div>
         </div>
       </div>
 
 {% endfor %}
 
-    </div>
+    </table>
     <div class="container" >
-        <h3 class="display-4 fw-normal" style="margin-top: 100">Добавление категории</h3>
+        <h3 class="display-4 fw-normal" style="margin-top: 100">Добавление задачи</h3>
     </div>
     <form action="/createcategory" method="post">
         <p>
@@ -38,8 +38,19 @@
             <p class="alert alert-danger" role="alert">
                 {{ error }}
             </p>
-        {% endfor %}
-            <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.deadline.label }}<br>
+            {{ form.deadline(class="form-control") }}<br>
+             {% for error in form.title.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+            {% endfor %}
+        </p>
+
+        {{ form.submit(type="submit", class="btn btn-primary") }}
     </form>
 
 </div>
