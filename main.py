@@ -149,4 +149,4 @@ def deletetask(id):
     print('Задача удалена')
     return redirect('/tasksall')
 
-app.run(port=8080, host='127.0.0.1')
+app.run(port=8080, host='0.0.0.0')
