@@ -1,9 +1,12 @@
+import markupsafe
 from flask import Flask, url_for, request, render_template
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
+from jinja2 import Markup
 from werkzeug.utils import redirect
 from forms.category import CategoryForm
 from forms.task import TaskForm
-
+from datetime import datetime
+import markdown
 
 from data import db_session
 from data.categories import Category
@@ -31,8 +34,17 @@ def load_user(user_id):
 @app.route('/')
 @app.route('/index')
 def index():
-    login = ''
-    return render_template('index.html', login=login)
+    with open("README.md", "r", encoding="utf-8") as input_file:
+        text = input_file.read()
+    html = markdown.markdown(text)
+    return render_template('index.html', html=markupsafe.Markup(html))
+
+@app.route('/help')
+def help():
+    with open("README.md", "r", encoding="utf-8") as input_file:
+        text = input_file.read()
+    html = markdown.markdown(text)
+    return render_template('doc.html', html=markupsafe.Markup(html))
 
 @app.route('/logout')
 def logout():
@@ -51,12 +63,13 @@ def login():
             if user.check_password(request.form.get('password')):
                 login_user(user)
 
-                return render_template('index.html', message="Вы успешно вошли в систему", login=user.name)
+                return render_template('base.html', message="Вы успешно вошли в систему", login=user.name)
             else:
-                return render_template('index.html', message="Неправильный пароль")
+                return render_template('base.html', message="Неправильный пароль")
         else:
-            return render_template('index.html', message="Неправильный логин")
-    return render_template('index.html', message="Непредвиденная ошибка")
+            return render_template('base.html', message="Неправильный логин")
+    return render_template('base.html', message="Непредвиденная ошибка")
+
 
 @app.route('/categories')
 def categories():
@@ -96,9 +109,46 @@ def tasks():
 
 @app.route('/tasksall')
 def tasksall():
-    form = TaskForm()
+
     db_sess = db_session.create_session()
     tasks = db_sess.query(Task).all()
+    categories = db_sess.query(Category).all()
+    form = TaskForm(categories=categories)
+
     return render_template('tasks.html', tasks=tasks, form=form)
+
+@app.route('/createtask', methods=['POST'])
+def createtask():
+    form = TaskForm()
+    # if form.validate_on_submit():
+    db_sess = db_session.create_session()
+    task = Task(
+        title=form.title.data,
+        deadline=form.deadline.data,
+        category_id=form.category.data,
+        created_date=datetime.now(),
+        done=0
+    )
+    # task = Task(
+    #     title='wrwerwer',
+    #     deadline=datetime.now(),
+    #     category_id=1,
+    #     created_date=datetime.now(),
+    #     done=0
+    # )
+
+    db_sess.add(task)
+    db_sess.commit()
+    print('Задача создана')
+    return redirect('/tasksall')
+
+@app.route('/deletetask/<int:id>')
+def deletetask(id):
+    db_sess = db_session.create_session()
+    task = db_sess.query(Task).filter(Task.id == id).first()
+    db_sess.delete(task)
+    db_sess.commit()
+    print('Задача удалена')
+    return redirect('/tasksall')
 
 app.run(port=8080, host='127.0.0.1')

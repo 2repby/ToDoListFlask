@@ -1,37 +1,45 @@
-{% extends "index.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 <div class="container" >
-    <h3 class="display-4 fw-normal" style="margin-top: 100">Задачи</h3>
+    <h1 class="display-6" style="margin-top: 100">Задачи</h1>
 </div>
 <div class="container" >
 
-    <table class="list-group">
+    <table class="table table-striped table-hover">
+        <tr>
+            <th>ID</th>
+            <th>Наименование</th>
+            <th>Создана</th>
+            <th>Выполнить до</th>
+            <th>Выполнено</th>
+            <th>Категория</th>
+            <th>Действия</th>
+
+        </tr>
          {% for item in tasks%}
-
-      <div class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
-
-        <div class="d-flex gap-2 w-100 justify-content-between">
-            <div>
-                <h6 class="mb-0">{{item.title}}</h6>
-
-            </div>
-            <div>
-            <a href="/edittask/{{ item.id }}"  class="btn btn-info">Редактировать</a>
-            <a href="/deletetask/{{ item.id }}"  class="btn btn-danger">Удалить</a>
-            </div>
-        </div>
-      </div>
-
-{% endfor %}
-
+        <tr>
+            <td>{{item.id}}</td>
+            <td>{{item.title}}</td>
+            <td>{{item.created_date}}</td>
+            <td>{{item.deadline}}</td>
+            <td>{{item.done}}</td>
+            <td>{{item.category_id}}</td>
+            <td>
+                <a href="/edittask/{{ item.id }}"  class="btn btn-info">Редактировать</a>
+                <a href="/deletetask/{{ item.id }}"  class="btn btn-danger">Удалить</a>
+            </td>
+        </tr>
+        {% endfor %}
     </table>
+
+
     <div class="container" >
-        <h3 class="display-4 fw-normal" style="margin-top: 100">Добавление задачи</h3>
+        <h1 class="display-6" style="margin-top: 100">Добавление задачи</h1>
     </div>
-    <form action="/createcategory" method="post">
+    <form action="/createtask" method="post">
+
         <p>
-            {{ form.csrf_token() }}
             {{ form.title.label }}<br>
             {{ form.title(class="form-control") }}<br>
              {% for error in form.title.errors %}
@@ -43,7 +51,16 @@
         <p>
             {{ form.deadline.label }}<br>
             {{ form.deadline(class="form-control") }}<br>
-             {% for error in form.title.errors %}
+             {% for error in form.deadline.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+            {% endfor %}
+        </p>
+                <p>
+            {{ form.category.label }}<br>
+            {{ form.category(class="form-control") }}<br>
+             {% for error in form.category.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
             </p>
