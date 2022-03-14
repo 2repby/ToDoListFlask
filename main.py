@@ -118,7 +118,6 @@ def tasksall():
 @app.route('/createtask', methods=['POST'])
 def createtask():
     form = TaskForm()
-    # if form.validate_on_submit():
     db_sess = db_session.create_session()
     task = Task(
         title=form.title.data,
@@ -127,14 +126,6 @@ def createtask():
         created_date=datetime.now(),
         done=0
     )
-    # task = Task(
-    #     title='wrwerwer',
-    #     deadline=datetime.now(),
-    #     category_id=1,
-    #     created_date=datetime.now(),
-    #     done=0
-    # )
-
     db_sess.add(task)
     db_sess.commit()
     print('Задача создана')
@@ -149,4 +140,4 @@ def deletetask(id):
     print('Задача удалена')
     return redirect('/tasksall')
 
-app.run(port=5000, host='0.0.0.0')
+app.run(port=8080, host='127.0.0.1')
