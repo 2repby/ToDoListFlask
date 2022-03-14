@@ -23,8 +23,6 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365)
 
 
-
-
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
