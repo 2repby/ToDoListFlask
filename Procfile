@@ -1,1 +1,1 @@
-web: gunicorn nowtodo:app --preload
+web: gunicorn main:app --preload
